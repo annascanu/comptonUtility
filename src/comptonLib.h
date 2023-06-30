@@ -1,6 +1,6 @@
-#ifndef FitClass_h
+#ifndef comptonLib_h
 
-#define FitClass_h
+#define comptonLib_h
 
 #include <iostream>
 #include <cstdlib>
@@ -24,14 +24,20 @@
 
 double solidAngle(double d, double a); // d is the distance from the scatterator to the detector, a is the radius of the detector
 double computeCrossSection(double ang);
+
+void plotHisto(const char *file_name, const char *x_axis, const char *y_axis, const char *graph_name);
+
 std::vector<double> calibration(const char *file_name);
 std::vector<double> gaussFitErfcBack(const char *file_name, const char *x_axis, const char *y_axis, const char *graph_name, int guess);
 std::vector<double> gaussFitExpBack(const char *file_name, const char *x_axis, const char *y_axis, const char *graph_name, int guess);
+std::vector<double> gaussFitLinBack(const char *file_name, const char *x_axis, const char *y_axis, const char *graph_name, int guess);
 std::vector<double> linFit(const char *file_name, const char *x_axis, const char *y_axis, const char *graph_name);
 /*
 std::vector<double> comptonFit(const char *file_name, const char *x_axis, const char *y_axis, const char *graph_name);
 std::vector<double> kleinNishinaFit(const char* file_name, const char *x_axis, const char *y_axis, const char *graph_name);
 */
+
+
 // -------------------------------------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------------------------------
@@ -54,6 +60,45 @@ double computeCrossSection(double ang)
 
 	return cross_sec;
 }
+
+void plotHisto(const char *file_name, const char *x_axis, const char *y_axis, const char *graph_name)
+{
+	std::ifstream input_file; 
+	input_file.open(file_name, std::ios::in);
+
+	std::vector<double> measures; 
+	double mis = 0; 
+	int count = 0;
+
+	while (true)
+	{
+		input_file >> mis; 
+		count++;
+		if (input_file.eof() == true) 
+			break;
+		measures.push_back(mis);
+	}
+
+	input_file.close();
+
+	TCanvas* c = new TCanvas();
+	int nBin = measures.size();
+	TH1F* h1 = new TH1F("h1", file_name, nBin, 0, 2048 );
+
+	for(int i = 0; i < measures.size(); i++)
+		h1 -> SetBinContent(i+1, measures.at(i));
+
+	h1 -> GetXaxis() -> SetTitle(x_axis);
+	h1 -> GetYaxis() -> SetTitle(y_axis);
+	h1 -> SetTitle(graph_name);
+
+	h1 -> Draw();
+	// Add any graphic options
+
+	return;
+}
+
+// Still working on some of these functions.
 
 /*
 vector<double> calibration(const char *file_name)   // To calibrate: y = energy, x = bin: model is y = ax^2 + bx + c 
@@ -125,6 +170,7 @@ vector<double> calibration(const char *file_name)   // To calibrate: y = energy,
 	return calibrated;
 }
 */
+
 std::vector<double> gaussFitErfcBack(const char *file_name, const char *x_axis, const char *y_axis, const char *graph_name, int guess)
 {
 	std::ifstream input_file; 
@@ -270,15 +316,89 @@ std::vector<double> gaussFitExpBack(const char *file_name, const char *x_axis, c
 	return parameters;
 }
 
+std::vector<double> gaussFitLinBack(const char *file_name, const char *x_axis, const char *y_axis, const char *graph_name, int guess)
+{
+	std::ifstream input_file; 
+	input_file.open(file_name, std::ios::in);
+
+	std::vector<double> measures; 
+	double mis = 0; 
+	int count = 0;
+
+	while (true)
+	{
+		input_file >> mis; 
+		count++;
+		if (input_file.eof() == true) 
+			break;
+		measures.push_back(mis);
+	}
+
+	input_file.close();
+
+	TCanvas* c = new TCanvas();
+	int nBin = measures.size();
+	TH1F* h1 = new TH1F("h1", graph_name, nBin, 0, 2048);
+
+	for(int i = 0; i < measures.size(); i++)
+		h1 -> SetBinContent(i+1, measures.at(i));
+
+	h1 -> GetXaxis() -> SetTitle(x_axis);
+	h1 -> GetYaxis() -> SetTitle(y_axis);
+	h1 -> SetTitle(graph_name);
+
+	double p0  = 1200; 
+	double p1 = guess;    
+	double p2  = 15 ;       
+	double max = 0; 
+
+	TF1* model = new TF1("model", "gaus(0) + pol1()");
+	model -> SetParameter (0, p0); 
+	model -> SetParameter (1, p1);
+	model -> SetParameter (2, p2);
+	model -> SetParameter (3, 50);
+	model -> SetParameter (4, 50);
+	max = p1;
+
+	model -> SetRange (max - 300, max + 300);  // maybe useless
+	model -> SetLineColor (kRed);
+
+	h1 -> GetXaxis() -> SetRangeUser(max - 300, max + 300);
+	h1 -> Fit("model", "R");
+
+	gStyle -> SetOptFit(1111);
+	h1 -> Draw();
+	model -> Draw("same");
+
+	TFitResultPtr r = h1 -> Fit("model", "S");  
+	double amp = r -> Parameter(0);
+	double centr = r -> Parameter(1);
+	double sigmaG = r -> Parameter(2);
+	double err_amp = r -> ParError(0);
+	double err_mu = r -> ParError(1);
+	double err_sigma = r -> ParError(2);
+
+	std::vector<double> parameters;
+	parameters.push_back(amp);
+	parameters.push_back(centr);
+	parameters.push_back(sigmaG);
+	parameters.push_back(err_amp);
+	parameters.push_back(err_mu);
+	parameters.push_back(err_sigma);
+
+	return parameters;
+}
+
 std::vector<double> linFit(const char *file_name, const char *x_axis, const char *y_axis, const char *graph_name)
 {
 	TGraphErrors * graph = new TGraphErrors(file_name);
-   
+	TCanvas * c1 = new TCanvas();
+
     graph -> GetXaxis() -> SetTitle(x_axis);
     graph -> GetYaxis() -> SetTitle(y_axis);
     graph -> SetTitle(graph_name);
    
-	TF1* model = new TF1("model", "pol2 ");
+	TF1* model = new TF1("model", "pol2");
 	model -> SetParameter (0, 0); 
 	model -> SetParameter (1, 0.3);
 	model -> SetParameter (2, 0);
@@ -374,6 +494,9 @@ std::vector<double> kleinNishinaFit(const char* file_name, const char *x_axis, c
 
 	return;
 }
+
 */
+
+
 #endif 
 

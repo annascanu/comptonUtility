@@ -7,4 +7,10 @@
  - utilities for the optimization of instrumentation used throughout the experience (for example, putting the FWHM of the observed gaussian peaks as a function of certain parameters);
  - etc.
 
- **Still a work in progress!**
+In the test directory you can find some .txt files useful to test out the code:
+- **calibrated.txt** contains the data to perform FWHM vs Amplifier gain linear fit;
+- **Sample2_90.txt** contains the data of a Compton measurement (for ϑ = 90°), to fit with a linear background;
+- other options are going to be added.
+
+
+ **Note that this is still a work in progress!**

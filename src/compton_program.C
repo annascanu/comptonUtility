@@ -49,7 +49,7 @@ int main (int argc, char ** argv)
     double distance = 31.5;
     double radius = 5.08/2;
 
-    std::cout << "\t\tInsert 0 if you want to calculate the solid angle, 1 if not." << std::endl;
+    std::cout << "\t\tInsert 0 if you want to compute the solid angle, 1 if not." << std::endl;
     std::cin >> choice;
     switch (choice)
     {
@@ -95,7 +95,13 @@ int main (int argc, char ** argv)
     const char *graph_title = argv[4];
 
     choice = 0;
-    std::cout << "\t\tWhat do you need to do? Insert:\n\t\t\t- 0 for a gaussian fit with an erf-background;\n\t\t\t- 1 for a gaussian fit with an exponential background;\n\t\t\t- 2 for a linear fit;\n\t\t- 3 for calibration results; etc" << std::endl;
+    std::cout << " \t\tWhat do you need to do? Insert: " <<
+                 " \n\t\t\t- 0 if you need to terminate the program; " <<
+                 " \n\t\t\t- 1 for a gaussian fit with an erf-background; " <<
+                 " \n\t\t\t- 2 for a gaussian fit with an exponential background; " <<
+                 " \n\t\t\t- 3 for a linear fit; " <<
+                 " \n\t\t\t- 4 if you need to plot a histogram; " <<
+                 " \n\t\t\t- 5 for further plans. Please add suggestions if you have them. " << std::endl;
     std::cin >> choice;
 
     std::vector<double> params;
@@ -103,32 +109,42 @@ int main (int argc, char ** argv)
     switch (choice)
     {
         case 0:
+            std::cout << "\n\n\t\t\t The program ends here :)" << std::endl;
+            break;
+        case 1:
             std::cout << "\n\n\n----------------- Gaussian fit with an erfc background -----------------\n\n\n" << std::endl;
             params = gaussFitErfcBack(nome_input, x_axis_title, y_axis_title, graph_title, 1200);
             break;
-        case 1:
+        case 2:
             std::cout << "\n\n\n----------------- Gaussian fit with an exponential background -----------------\n\n\n" << std::endl;
             params = gaussFitExpBack(nome_input, x_axis_title, y_axis_title, graph_title, 1200);
             break;
-        case 2:
+        case 3:
             std::cout << "\n\n\n----------------- Linear fit -----------------\n\n\n" << std::endl;
             params = linFit(nome_input, x_axis_title, y_axis_title, graph_title);
             break;
-        case 3: 
-            std::cout << "\n\n\n\n don't choose this option! i'm going to do this later\n\n\n" << std::endl;
+        case 4: 
+            std::cout << "\n\n\n\n------------ Plotting a histogram --------------\n\n\n" << std::endl;
             break;
+        case 5:
+            std::cout << "\n\n\t\t New options are going to be implemented soon! Currently working on: " <<
+                         "\n\t\t\t\t - energy calibration fit; " <<
+                         "\n\t\t\t\t - specific functions to fit the FWHM vs various parameters of the electronic chain. " <<
+                         "\n\t\t\t\t - anything else that might come to my mind." << std::endl;
     }
 
     /*
+    // If needed, a gaussian without the background. 
+    // Set the three parameters with the ones that are given to you by the fit function, 
+    // which should return a vector with the following:
+    // params.at(0) and params.at(3) are the centroid and its error;
+    // params.at(1) and params.at(4) are the sigma and its error;
+    // params.at(2) and params.at(5) are the area and its error.
 
     TF1* gausFin = new TF1("gausFin", "gaus(0)");
     gausFin -> FixParameter (0, amp);
     gausFin -> FixParameter (1, centr);
     gausFin -> FixParameter (2, sigmaG);
-
-    double integral = gausFin -> Integral( centr - 5*sigmaG, centr + 5*sigmaG);
-    double integralErr = gausFin -> IntegralError( centr - 5*sigmaG, centr + 5*sigmaG);
-
     */
 
     myApp -> Run();
