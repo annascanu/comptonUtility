@@ -19,6 +19,6 @@ In the *test* directory, you can find some .txt files which *could* be useful to
 
 [^1]: To execute, type the following on the command line: ./compton calibrated.txt "Amplifier gain" "FWHM %" "FWHM vs. Amplifier gain"
 
-[^2] To execute, type the following on the command line: ./compton Sample2_90.txt "ADC channel" "Counts" "Compton measurement"
+[^2]: To execute, type the following on the command line: ./compton Sample2_90.txt "ADC channel" "Counts" "Compton measurement"
 
  **Please note that this is still a work in progress! Any suggestions are welcome.**
