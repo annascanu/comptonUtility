@@ -125,6 +125,7 @@ int main (int argc, char ** argv)
             break;
         case 4: 
             std::cout << "\n\n\n\n------------ Plotting a histogram --------------\n\n\n" << std::endl;
+            plotHisto(nome_input, x_axis_title, y_axis_title, graph_title);
             break;
         case 5:
             std::cout << "\n\n\t\t New options are going to be implemented soon! Currently working on: " <<
