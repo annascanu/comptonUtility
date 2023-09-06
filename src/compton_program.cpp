@@ -6,7 +6,7 @@ This is a program I'm writing for the Compton lab experience and it should do ev
     - linear fit for the activity measurements;
     - ... (anything else that might be remotely useful and is going to be added in the future).
 
-To compile, on the terminal: g++ compton_program.C `root-config --glibs --cflags` -o compton
+To compile, on the terminal: g++ compton_program.cpp `root-config --glibs --cflags` -o compton
 and after compiling, ./compton name_of_file.txt "Label for the x-axis" "Label for the y-axis" "Title of the graph"
 */
 #include <iostream>
@@ -151,5 +151,3 @@ int main (int argc, char ** argv)
     myApp -> Run();
     return 0;
 }
-
-

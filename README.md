@@ -8,7 +8,7 @@
  - etc.
 
 To compile, on your terminal:
-    **g++ compton_program.C `root-config --glibs --cflags` -o compton**
+    **g++ compton_program.cpp ``root-config --glibs --cflags`` -o compton**
 and to execute, you must type in the following (or else the program won't start):
     **./compton name_of_file.txt "Label for the x-axis" "Label for the y-axis" "Title of the graph"**
 
