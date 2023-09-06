@@ -124,7 +124,7 @@ int main (int argc, char ** argv)
             params = linFit(nome_input, x_axis_title, y_axis_title, graph_title);
             break;
         case 4: 
-            std::cout << "\n\n\n\n------------ Plotting a histogram --------------\n\n\n" << std::endl;
+            std::cout << "\n\n\n\n------------ Plotting a histogram: you need a file in which every line contains the number of entries in each bin --------------\n\n\n" << std::endl;
             plotHisto(nome_input, x_axis_title, y_axis_title, graph_title);
             break;
         case 5:
